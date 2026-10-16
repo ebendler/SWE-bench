@@ -1,3 +1,4 @@
+import platform
 from dataclasses import dataclass
 from typing import Optional, Union, cast
 
@@ -5,6 +6,11 @@ from swebench.types import (
     SWEbenchInstance,
 )
 
+
+# Build for the host architecture by default; amd64 only when the host is x86-64.
+HOST_ARCH = {"x86_64": "amd64", "aarch64": "arm64", "arm64": "arm64"}.get(
+    platform.machine(), "amd64"
+)
 
 @dataclass
 class ImageSpec:
@@ -17,7 +23,7 @@ class ImageSpec:
     dockerfile: str
     namespace: Optional[str]
     tag: str = "latest"
-    arch: str = "amd64"
+    arch: str = HOST_ARCH
     context_dir: Optional[str] = None
 
     def __post_init__(self):
